@@ -20,6 +20,15 @@ namespace Spatial {
         DEG315 = -DEG45,
         DEG360 = PI + PI;
 
+    template <typename T>
+    inline static constexpr T clamp (const T value, const T min_value, const T max_value) {
+        if (value > max_value) {
+            return max_value;
+        } else if (value < min_value) {
+            return min_value;
+        }
+        return value;
+    }
 };
 
 #endif
