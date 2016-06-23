@@ -53,6 +53,15 @@ template < \
     >::type \
 >
 
+#define MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(A, B) \
+template < \
+    typename _DUMMY = bool, \
+    typename = typename std::enable_if< \
+        A == B, \
+        _DUMMY \
+    >::type \
+>
+
 namespace Spatial {
 
     class Filter {
@@ -374,18 +383,13 @@ namespace Spatial {
 
 // -------------------------------------
 
-        template <unsigned SZ = SIZE>
-        inline constexpr typename std::enable_if<(SZ == 3), Vec<SZ, TYPE>>::type cross (const Vec<SZ, TYPE> &other) const {
+        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> cross (const Vec<3, TYPE> &other) const {
             return {
                 this->store[1] * other[2] - other[1] * this->store[2],
                 this->store[2] * other[0] - other[2] * this->store[0],
                 this->store[0] * other[1] - other[0] * this->store[1]
             };
-        }
-
-        template <unsigned SZ = SIZE>
-        inline constexpr typename std::enable_if<(SZ != 3), Vec<SZ, TYPE>>::type cross (const Vec<SZ, TYPE> &other) const {
-            throw new std::string("Cross product is only defined to 3D");
         }
 
 // -----------------------------------------------------------------------------
@@ -496,6 +500,74 @@ namespace Spatial {
             } else if (length2 > (max * max)) {
                 return this->resize(max);
             }
+            return *this;
+        }
+
+// -------------------------------------
+
+        inline Vec<SIZE, TYPE> opposed (const Vec<SIZE, TYPE> &other) const {
+            if (this->dot(other) > 0) {
+                return -(*this);
+            }
+            return *this;
+        }
+
+        inline Vec<SIZE, TYPE> &oppose (const Vec<SIZE, TYPE> &other) {
+            if (this->dot(other) > 0) {
+                for (unsigned i = 0; i < SIZE; ++i) {
+                    this->store[i] = -this->store[i];
+                }
+            }
+            return *this;
+        }
+
+// -------------------------------------
+
+        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> transformed (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
+            const Vec<3, TYPE> diff = {
+                this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
+            };
+            return {
+                pivot[0] + (diff[0] * matrix[0]) + (diff[1] * matrix[4]) + (diff[2] * matrix[ 8]) + matrix[12],
+                pivot[1] + (diff[0] * matrix[1]) + (diff[1] * matrix[5]) + (diff[2] * matrix[ 9]) + matrix[13],
+                pivot[2] + (diff[0] * matrix[2]) + (diff[1] * matrix[6]) + (diff[2] * matrix[10]) + matrix[14]
+            };
+        }
+
+        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> &transform (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
+            const Vec<3, TYPE> diff = {
+                this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
+            };
+            this->store[0] = pivot[0] + (diff[0] * matrix[0]) + (diff[1] * matrix[4]) + (diff[2] * matrix[ 8]) + matrix[12];
+            this->store[1] = pivot[1] + (diff[0] * matrix[1]) + (diff[1] * matrix[5]) + (diff[2] * matrix[ 9]) + matrix[13];
+            this->store[2] = pivot[2] + (diff[0] * matrix[2]) + (diff[1] * matrix[6]) + (diff[2] * matrix[10]) + matrix[14];
+            return *this;
+        }
+
+// -------------------------------------
+
+        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> transformedNormal (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
+            const Vec<3, TYPE> diff = {
+                this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
+            };
+            return {
+                pivot[0] + (diff[0] * matrix[0]) + (diff[1] * matrix[4]) + (diff[2] * matrix[ 8]),
+                pivot[1] + (diff[0] * matrix[1]) + (diff[1] * matrix[5]) + (diff[2] * matrix[ 9]),
+                pivot[2] + (diff[0] * matrix[2]) + (diff[1] * matrix[6]) + (diff[2] * matrix[10])
+            };
+        }
+
+        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> &transformNormal (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
+            const Vec<3, TYPE> diff = {
+                this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
+            };
+            this->store[0] = pivot[0] + (diff[0] * matrix[0]) + (diff[1] * matrix[4]) + (diff[2] * matrix[ 8]);
+            this->store[1] = pivot[1] + (diff[0] * matrix[1]) + (diff[1] * matrix[5]) + (diff[2] * matrix[ 9]);
+            this->store[2] = pivot[2] + (diff[0] * matrix[2]) + (diff[1] * matrix[6]) + (diff[2] * matrix[10]);
             return *this;
         }
 
