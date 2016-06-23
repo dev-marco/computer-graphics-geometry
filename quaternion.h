@@ -125,28 +125,14 @@ namespace Spatial {
 
         inline Vec<3> rotated (const Vec<3> &vec, const Vec<3> &pivot = Vec<3>::zero) const {
             if (!this->isIdentity()) {
-                const std::array<float_max_t, 16> matrix = this->rotation();
-                const std::array<float_max_t, 3> diff = {
-                    vec[0] - pivot[0], vec[1] - pivot[1], vec[2] - pivot[2]
-                };
-                return {
-                    pivot[0] + (diff[0] * matrix[0]) + (diff[1] * matrix[4]) + (diff[2] * matrix[ 8]),
-                    pivot[1] + (diff[0] * matrix[1]) + (diff[1] * matrix[5]) + (diff[2] * matrix[ 9]),
-                    pivot[2] + (diff[0] * matrix[2]) + (diff[1] * matrix[6]) + (diff[2] * matrix[10])
-                };
+                return vec.transformed(this->rotation(), pivot);
             }
             return vec;
         }
 
         inline Vec<3> &rotate (Vec<3> &vec, const Vec<3> &pivot = Vec<3>::zero) const {
             if (!this->isIdentity()) {
-                const std::array<float_max_t, 16> matrix = this->rotation();
-                const std::array<float_max_t, 3> diff = {
-                    vec[0] - pivot[0], vec[1] - pivot[1], vec[2] - pivot[2]
-                };
-                vec[0] = pivot[0] + (diff[0] * matrix[0]) + (diff[1] * matrix[4]) + (diff[1] * matrix[ 8]);
-                vec[1] = pivot[1] + (diff[0] * matrix[1]) + (diff[1] * matrix[5]) + (diff[1] * matrix[ 9]);
-                vec[2] = pivot[2] + (diff[0] * matrix[2]) + (diff[1] * matrix[6]) + (diff[1] * matrix[10]);
+                return vec.transform(this->rotation(), pivot);
             }
             return vec;
         }
