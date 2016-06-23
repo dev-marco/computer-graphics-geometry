@@ -5,9 +5,9 @@ typedef double float_max_t;
 
 namespace Spatial {
 
-    static constexpr float_max_t
-        EPSILON = 0.0000000000000001L,
-        PI = 3.141592653589793238462643383279502884L,
+    constexpr float_max_t
+        EPSILON = 0.0000000000000001,
+        PI = 3.141592653589793238462643383279502884,
         DEG15 = PI / 12.0,
         DEG30 = PI / 6.0,
         DEG45 = PI / 4.0,
@@ -18,10 +18,12 @@ namespace Spatial {
         DEG225 = -DEG135,
         DEG270 = -DEG90,
         DEG315 = -DEG45,
-        DEG360 = PI + PI;
+        DEG360 = PI + PI,
+        DEG2RAD = DEG180 / 180.0,
+        RAD2DEG = 180.0 / DEG180;
 
     template <typename T>
-    inline static constexpr T clamp (const T value, const T min_value, const T max_value) {
+    constexpr T clamp (const T value, const T min_value, const T max_value) {
         if (value > max_value) {
             return max_value;
         } else if (value < min_value) {
@@ -29,6 +31,8 @@ namespace Spatial {
         }
         return value;
     }
+
+    constexpr closeToZero (float_max_t value) { return -EPSILON <= value && value <= EPSILON; }
 };
 
 #endif
