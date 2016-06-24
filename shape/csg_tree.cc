@@ -8,7 +8,7 @@ namespace Spatial {
         float_max_t shapes_inter[4];
         bool shapes_result[2], global_result = false;
         shapes_result[0] = this->getFirst()->intersectLine(line, shapes_normal[0], shapes_normal[2], shapes_inter[0], shapes_inter[2], fix_normals);
-        if (shapes_result[0] || this->getOperation() == Type::UNION || this->getOperation() == Type::INTERSECTION) {
+        if (shapes_result[0] || this->getOperation() != Type::SUBTRACTION) {
             shapes_result[1] = this->getSecond()->intersectLine(line, shapes_normal[1], shapes_normal[3], shapes_inter[1], shapes_inter[3], fix_normals);
             if (shapes_result[0]) {
                 if (shapes_result[1]) {
@@ -31,7 +31,7 @@ namespace Spatial {
                             } else if (shapes_inter[3] < shapes_inter[2]) {
                                 if (shapes_inter[0] > shapes_inter[3]) {
                                     min_index = 0;
-                                    max_index = 1;
+                                    max_index = 2;
                                 } else {
                                     min_index = 3;
                                     max_index = 2;
@@ -41,11 +41,11 @@ namespace Spatial {
                     }
                 } else if (this->getOperation() != Type::INTERSECTION) {
                     min_index = 0;
-                    max_index = 1;
+                    max_index = 2;
                     global_result = true;
                 }
             } else if (shapes_result[1] && this->getOperation() == Type::UNION) {
-                min_index = 2;
+                min_index = 1;
                 max_index = 3;
                 global_result = true;
             }
