@@ -285,6 +285,13 @@ namespace Spatial {
             return out << '}';
         }
 
+        friend std::istream &operator >> (std::istream &in, const Vec<SIZE, TYPE> &vec) {
+            for (unsigned i = 0; i < SIZE; ++i) {
+                in >> vec.store[i];
+            }
+            return in;
+        }
+
 // -------------------------------------
 
         inline constexpr Vec<SIZE, TYPE> operator - (void) const {
