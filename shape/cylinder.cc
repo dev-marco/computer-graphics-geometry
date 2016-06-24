@@ -8,7 +8,7 @@ namespace Geometry {
         return { std::atan2(diff[1], diff[0]) / TWO_PI, diff[2] / this->getHeight() };
     }
 
-    bool Cylinder::intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_t &t_min, float_t &t_max, bool fix_normals) const {
+    bool Cylinder::intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_max_t &t_min, float_max_t &t_max, bool fix_normals) const {
 
         bool is_t_min_top_cap, is_t_min_bottom_cap, is_t_max_top_cap, is_t_max_bottom_cap;
 

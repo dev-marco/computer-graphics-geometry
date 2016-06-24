@@ -22,7 +22,7 @@ namespace Geometry {
 
         virtual Shape *clone (void) const = 0;
 
-        virtual bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_t &t_min, float_t &t_max, bool fix_normals) const = 0;
+        virtual bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_max_t &t_min, float_max_t &t_max, bool fix_normals) const = 0;
 
     };
 }

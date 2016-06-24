@@ -10,7 +10,7 @@ namespace Geometry {
 
         unsigned s_index, t_index;
         Vec<3> normal, point, s_param, t_param;
-        float_t d;
+        float_max_t d;
 
         void calcForX(void);
         void calcForY(void);
@@ -21,22 +21,22 @@ namespace Geometry {
         Plane (const Vec<3> &_normal, const Vec<3> &_point) :
             normal(_normal.normalized()), point(_point), d(_normal.dot(_point)) {}
 
-        Plane(const Vec<3> &_normal, float_t _d);
+        Plane(const Vec<3> &_normal, float_max_t _d);
 
         inline const Vec<3> &getNormal (void) const { return this->normal; }
         inline const Vec<3> &getPoint (void) const { return this->point; }
 
-        inline float_t getA (void) const { return this->normal[0]; }
-        inline float_t getB (void) const { return this->normal[0]; }
-        inline float_t getC (void) const { return this->normal[0]; }
-        inline float_t getD (void) const { return this->d; }
+        inline float_max_t getA (void) const { return this->normal[0]; }
+        inline float_max_t getB (void) const { return this->normal[0]; }
+        inline float_max_t getC (void) const { return this->normal[0]; }
+        inline float_max_t getD (void) const { return this->d; }
 
-        inline Vec<3> at (float_t s, float_t t) { return this->getPoint() + s_param * s + t_param * t; }
-        bool param(const Vec<3> &point, float_t &s, float_t &t, bool in = false);
+        inline Vec<3> at (float_max_t s, float_max_t t) { return this->getPoint() + s_param * s + t_param * t; }
+        bool param(const Vec<3> &point, float_max_t &s, float_max_t &t, bool in = false);
 
-        inline bool inside (const Vec<3> &point) const { float_t result = this->normal.dot(point) - d; return closeToZero(result); }
+        inline bool inside (const Vec<3> &point) const { float_max_t result = this->normal.dot(point) - d; return closeToZero(result); }
 
-        bool intersectLine(const Line &line, Vec<3> &normal, float_t &t_inter, bool fix_normal = true);
+        bool intersectLine(const Line &line, Vec<3> &normal, float_max_t &t_inter, bool fix_normal = true);
 
     };
 };

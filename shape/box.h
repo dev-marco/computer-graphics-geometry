@@ -31,7 +31,7 @@ namespace Geometry {
 
             inline bool fit (void) const override { return true; }
 
-            bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_t &t_min, float_t &t_max, bool fix_normals = true) const override;
+            bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_max_t &t_min, float_max_t &t_max, bool fix_normals = true) const override;
 
     };
 };

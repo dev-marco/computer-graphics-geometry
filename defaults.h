@@ -1,13 +1,14 @@
 #ifndef MODULE_GRAPHICS_GEOMETRY_DEFAULTS_H_
 #define MODULE_GRAPHICS_GEOMETRY_DEFAULTS_H_
 
-typedef double float_t;
+typedef double float_max_t;
 
 namespace Geometry {
 
-    constexpr float_t
+    constexpr float_max_t
         EPSILON = 0.0000000000000001,
         PI = 3.141592653589793238462643383279502884,
+        TWO_PI = PI + PI,
         DEG15 = PI / 12.0,
         DEG30 = PI / 6.0,
         DEG45 = PI / 4.0,
@@ -18,7 +19,7 @@ namespace Geometry {
         DEG225 = -DEG135,
         DEG270 = -DEG90,
         DEG315 = -DEG45,
-        DEG360 = PI + PI,
+        DEG360 = 0.0,
         DEG2RAD = DEG180 / 180.0,
         RAD2DEG = 180.0 / DEG180;
 
@@ -32,7 +33,7 @@ namespace Geometry {
         return value;
     }
 
-    constexpr closeToZero (float_t value) { return -EPSILON <= value && value <= EPSILON; }
+    constexpr closeToZero (float_max_t value) { return -EPSILON <= value && value <= EPSILON; }
 };
 
 #endif

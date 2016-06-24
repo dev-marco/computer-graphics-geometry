@@ -108,7 +108,7 @@ namespace Geometry {
 
     };
 
-    template <unsigned SIZE, typename TYPE = float_t>
+    template <unsigned SIZE, typename TYPE = float_max_t>
     class Vec {
 
         static_assert(SIZE > 0, "Vec size should be bigger than zero.");
@@ -285,7 +285,7 @@ namespace Geometry {
             return out << '}';
         }
 
-        friend std::istream &operator >> (std::istream &in, const Vec<SIZE, TYPE> &vec) {
+        friend std::istream &operator >> (std::istream &in, Vec<SIZE, TYPE> &vec) {
             for (unsigned i = 0; i < SIZE; ++i) {
                 in >> vec.store[i];
             }
@@ -473,7 +473,7 @@ namespace Geometry {
 
 // -------------------------------------
 
-        inline constexpr Vec<SIZE, TYPE> lerped (const Vec<SIZE, TYPE> &other, const float_t position) const {
+        inline constexpr Vec<SIZE, TYPE> lerped (const Vec<SIZE, TYPE> &other, const float_max_t position) const {
             Vec<SIZE, TYPE> result;
             for (unsigned i = 0; i < SIZE; ++i) {
                 result.store[i] = (1.0 - position) * this->store[i] + position * other.store[i];
@@ -481,7 +481,7 @@ namespace Geometry {
             return result;
         }
 
-        inline constexpr Vec<SIZE, TYPE> &lerp (const Vec<SIZE, TYPE> &other, const float_t position) {
+        inline constexpr Vec<SIZE, TYPE> &lerp (const Vec<SIZE, TYPE> &other, const float_max_t position) {
             for (unsigned i = 0; i < SIZE; ++i) {
                 this->store[i] = (1.0 - position) * this->store[i] + position * other.store[i];
             }
@@ -531,7 +531,7 @@ namespace Geometry {
 // -------------------------------------
 
         MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
-        inline constexpr Vec<3, TYPE> transformed (const std::array<float_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
+        inline constexpr Vec<3, TYPE> transformed (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
             const Vec<3, TYPE> diff = {
                 this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
             };
@@ -543,7 +543,7 @@ namespace Geometry {
         }
 
         MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
-        inline constexpr Vec<3, TYPE> &transform (const std::array<float_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
+        inline constexpr Vec<3, TYPE> &transform (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
             const Vec<3, TYPE> diff = {
                 this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
             };
@@ -556,7 +556,7 @@ namespace Geometry {
 // -------------------------------------
 
         MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
-        inline constexpr Vec<3, TYPE> transformedNormal (const std::array<float_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
+        inline constexpr Vec<3, TYPE> transformedNormal (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
             const Vec<3, TYPE> diff = {
                 this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
             };
@@ -568,7 +568,7 @@ namespace Geometry {
         }
 
         MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
-        inline constexpr Vec<3, TYPE> &transformNormal (const std::array<float_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
+        inline constexpr Vec<3, TYPE> &transformNormal (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
             const Vec<3, TYPE> diff = {
                 this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
             };

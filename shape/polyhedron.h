@@ -29,7 +29,7 @@ namespace Geometry {
 
         inline Shape *clone (void) const override { return new Polyhedron(this->getPlanes()); }
 
-        bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_t &t_min, float_t &t_max, bool fix_normals = true) const override;
+        bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_max_t &t_min, float_max_t &t_max, bool fix_normals = true) const override;
 
     };
 
