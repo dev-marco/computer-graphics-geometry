@@ -1,9 +1,9 @@
-#ifndef MODULE_SPATIAL_CSG_TREE_H_
-#define MODULE_SPATIAL_CSG_TREE_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_CSG_TREE_H_
+#define MODULE_GRAPHICS_GEOMETRY_CSG_TREE_H_
 
 #include "shape.h"
 
-namespace Spatial {
+namespace Geometry {
 
     class CSGTree : public Shape {
 
@@ -37,7 +37,7 @@ namespace Spatial {
 
         inline Shape *clone (void) const override { return new CSGTree(this->getFirst(), this->getOperation(), this->getSecond()); }
 
-        bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_max_t &t_min, float_max_t &t_max, bool fix_normals) const override;
+        bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_t &t_min, float_t &t_max, bool fix_normals) const override;
 
     };
 

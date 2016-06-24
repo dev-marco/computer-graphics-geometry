@@ -1,9 +1,9 @@
 #include "../intersection.h"
 #include "box.h"
 
-namespace Spatial {
+namespace Geometry {
 
-    bool Box::intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_max_t &t_min, float_max_t &t_max, bool fix_normals) const {
+    bool Box::intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_t &t_min, float_t &t_max, bool fix_normals) const {
 
         unsigned axis_t_min, axis_t_max;
         bool is_t_min_box_min, is_t_max_box_min;

@@ -1,11 +1,11 @@
-#ifndef MODULE_SPATIAL_SHAPE_H_
-#define MODULE_SPATIAL_SHAPE_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_SHAPE_H_
+#define MODULE_GRAPHICS_GEOMETRY_SHAPE_H_
 
 #include "../defaults.h"
 #include "../vec.h"
 #include "../line.h"
 
-namespace Spatial {
+namespace Geometry {
 
     class Shape {
 
@@ -22,7 +22,7 @@ namespace Spatial {
 
         virtual Shape *clone (void) const = 0;
 
-        virtual bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_max_t &t_min, float_max_t &t_max, bool fix_normals) const = 0;
+        virtual bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_t &t_min, float_t &t_max, bool fix_normals) const = 0;
 
     };
 }

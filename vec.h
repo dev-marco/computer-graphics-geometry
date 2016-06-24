@@ -1,5 +1,5 @@
-#ifndef MODULE_SPATIAL_VEC_H_
-#define MODULE_SPATIAL_VEC_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_VEC_H_
+#define MODULE_GRAPHICS_GEOMETRY_VEC_H_
 
 #include <stdexcept>
 #include <initializer_list>
@@ -17,7 +17,7 @@
 #include "defaults.h"
 #include "type_traits.h"
 
-#define MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATOR(TYPE) \
+#define MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATOR(TYPE) \
 template < \
     typename ITERATOR, \
     typename = typename std::enable_if< \
@@ -29,7 +29,7 @@ template < \
     >::type \
 >
 
-#define MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATIVE(TYPE) \
+#define MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATIVE(TYPE) \
 template < \
     typename ITERATIVE, \
     typename = typename std::enable_if< \
@@ -41,7 +41,7 @@ template < \
     >::type \
 >
 
-#define MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE) \
+#define MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE) \
 template < \
     typename CONSTRUCTIBLE, \
     typename = typename std::enable_if< \
@@ -53,7 +53,7 @@ template < \
     >::type \
 >
 
-#define MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(A, B) \
+#define MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(A, B) \
 template < \
     typename _DUMMY = bool, \
     typename = typename std::enable_if< \
@@ -62,7 +62,7 @@ template < \
     >::type \
 >
 
-namespace Spatial {
+namespace Geometry {
 
     class Filter {
 
@@ -108,7 +108,7 @@ namespace Spatial {
 
     };
 
-    template <unsigned SIZE, typename TYPE = float_max_t>
+    template <unsigned SIZE, typename TYPE = float_t>
     class Vec {
 
         static_assert(SIZE > 0, "Vec size should be bigger than zero.");
@@ -184,7 +184,7 @@ namespace Spatial {
 
         inline Vec (void) {}
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATOR(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATOR(TYPE)
         inline Vec (ITERATOR it_copy, ITERATOR end_copy, TYPE fill = static_cast<TYPE>(0)) {
             auto it_store = std::begin(this->store), end_store = std::end(this->store);
             while (it_store != end_store && it_copy != end_copy) {
@@ -194,10 +194,10 @@ namespace Spatial {
             std::fill(it_store, end_store, fill);
         }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         inline Vec (const CONSTRUCTIBLE &fill) { std::fill(std::begin(this->store), std::end(this->store), static_cast<TYPE>(fill)); }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
         inline Vec (const ITERATIVE &_copy, TYPE fill = static_cast<TYPE>(0)) :
             Vec<SIZE, TYPE>(std::begin(_copy), std::end(_copy), fill) {}
 
@@ -330,7 +330,7 @@ namespace Spatial {
             return result;
         }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATOR(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATOR(TYPE)
         Vec<SIZE, TYPE> mapped (const std::function<TYPE(const TYPE &, typename std::iterator_traits<ITERATOR>::reference)> &func, ITERATOR it_apply, const ITERATOR &end_apply) const {
             Vec<SIZE, TYPE> result;
             auto it_store = std::begin(this->store), end_store = std::end(this->store);
@@ -350,7 +350,7 @@ namespace Spatial {
             return *this;
         }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATOR(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATOR(TYPE)
         Vec<SIZE, TYPE> &map (const std::function<void(TYPE &, typename std::iterator_traits<ITERATOR>::reference)> &func, ITERATOR it_apply, const ITERATOR &end_apply) {
             auto it_store = std::begin(this->store), end_store = std::end(this->store);
             while (it_store != end_store && it_apply != end_apply) {
@@ -390,7 +390,7 @@ namespace Spatial {
 
 // -------------------------------------
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
         inline constexpr Vec<3, TYPE> cross (const Vec<3, TYPE> &other) const {
             return {
                 this->store[1] * other[2] - other[1] * this->store[2],
@@ -473,7 +473,7 @@ namespace Spatial {
 
 // -------------------------------------
 
-        inline constexpr Vec<SIZE, TYPE> lerped (const Vec<SIZE, TYPE> &other, const float_max_t position) const {
+        inline constexpr Vec<SIZE, TYPE> lerped (const Vec<SIZE, TYPE> &other, const float_t position) const {
             Vec<SIZE, TYPE> result;
             for (unsigned i = 0; i < SIZE; ++i) {
                 result.store[i] = (1.0 - position) * this->store[i] + position * other.store[i];
@@ -481,7 +481,7 @@ namespace Spatial {
             return result;
         }
 
-        inline constexpr Vec<SIZE, TYPE> &lerp (const Vec<SIZE, TYPE> &other, const float_max_t position) {
+        inline constexpr Vec<SIZE, TYPE> &lerp (const Vec<SIZE, TYPE> &other, const float_t position) {
             for (unsigned i = 0; i < SIZE; ++i) {
                 this->store[i] = (1.0 - position) * this->store[i] + position * other.store[i];
             }
@@ -530,8 +530,8 @@ namespace Spatial {
 
 // -------------------------------------
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
-        inline constexpr Vec<3, TYPE> transformed (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> transformed (const std::array<float_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
             const Vec<3, TYPE> diff = {
                 this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
             };
@@ -542,8 +542,8 @@ namespace Spatial {
             };
         }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
-        inline constexpr Vec<3, TYPE> &transform (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> &transform (const std::array<float_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
             const Vec<3, TYPE> diff = {
                 this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
             };
@@ -555,8 +555,8 @@ namespace Spatial {
 
 // -------------------------------------
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
-        inline constexpr Vec<3, TYPE> transformedNormal (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> transformedNormal (const std::array<float_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) const {
             const Vec<3, TYPE> diff = {
                 this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
             };
@@ -567,8 +567,8 @@ namespace Spatial {
             };
         }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
-        inline constexpr Vec<3, TYPE> &transformNormal (const std::array<float_max_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> &transformNormal (const std::array<float_t, 16> &matrix, const Vec<3, TYPE> &pivot = Vec<3, TYPE>::zero) {
             const Vec<3, TYPE> diff = {
                 this->store[0] - pivot[0], this->store[1] - pivot[1], this->store[2] - pivot[2]
             };
@@ -580,72 +580,72 @@ namespace Spatial {
 
 // -----------------------------------------------------------------------------
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> operator + (const CONSTRUCTIBLE &other, const Vec<SIZE, TYPE> &vec) { return vec.mapped([ other ] (const TYPE &a) { return _add_out(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> operator + (const Vec<SIZE, TYPE> &vec, const CONSTRUCTIBLE &other) { return vec.mapped([ other ] (const TYPE &a) { return _add_out(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
         Vec<SIZE, TYPE> operator + (const ITERATIVE &other) const { return this->mapped(_add_out, std::begin(other), std::end(other)); }
-        // MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        // MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         // friend Vec<SIZE, TYPE> operator + (const Vec<SIZE, TYPE> &vec, const std::initializer_list<CONSTRUCTIBLE> &other) { return vec.mapped(_add_out, std::begin(other), std::end(other)); }
-        // MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        // MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         // friend Vec<SIZE, TYPE> operator + (const std::initializer_list<CONSTRUCTIBLE> &other, const Vec<SIZE, TYPE> &vec) { return vec.mapped(_add_out, std::begin(other), std::end(other)); }
 
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> &operator += (const CONSTRUCTIBLE &other, Vec<SIZE, TYPE> &vec) { return vec.map([ other ] (TYPE &a) { _add_in(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> &operator += (Vec<SIZE, TYPE> &vec, const CONSTRUCTIBLE &other) { return vec.map([ other ] (TYPE &a) { _add_in(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
         Vec<SIZE, TYPE> &operator += (const ITERATIVE &other) { return this->map(_add_in, std::begin(other), std::end(other)); }
         Vec<SIZE, TYPE> &operator += (const std::initializer_list<TYPE> &other) { return this->map(_add_in, std::begin(other), std::end(other)); }
 
 // -------------------------------------
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> operator - (const CONSTRUCTIBLE &other, const Vec<SIZE, TYPE> &vec) { return vec.mapped([ other ] (const TYPE &a) { return _sub_out(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> operator - (const Vec<SIZE, TYPE> &vec, const CONSTRUCTIBLE &other) { return vec.mapped([ other ] (const TYPE &a) { return _sub_out(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
         Vec<SIZE, TYPE> operator - (const ITERATIVE &other) const { return this->mapped(_sub_out, std::begin(other), std::end(other)); }
         Vec<SIZE, TYPE> operator - (const std::initializer_list<TYPE> &other) const { return this->mapped(_sub_out, std::begin(other), std::end(other)); }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> &operator -= (const CONSTRUCTIBLE &other, Vec<SIZE, TYPE> &vec) { return vec.map([ other ] (TYPE &a) { _sub_in(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> &operator -= (Vec<SIZE, TYPE> &vec, const CONSTRUCTIBLE &other) { return vec.map([ other ] (TYPE &a) { _sub_in(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
         Vec<SIZE, TYPE> &operator -= (const ITERATIVE &other) { return this->map(_sub_in, std::begin(other), std::end(other)); }
         Vec<SIZE, TYPE> &operator -= (const std::initializer_list<TYPE> &other) { return this->map(_sub_in, std::begin(other), std::end(other)); }
 
 // -------------------------------------
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> operator * (const CONSTRUCTIBLE &other, const Vec<SIZE, TYPE> &vec) { return vec.mapped([ other ] (const TYPE &a) { return _mul_out(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> operator * (const Vec<SIZE, TYPE> &vec, const CONSTRUCTIBLE &other) { return vec.mapped([ other ] (const TYPE &a) { return _mul_out(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
         Vec<SIZE, TYPE> operator * (const ITERATIVE &other) const { return this->mapped(_mul_out, std::begin(other), std::end(other)); }
         Vec<SIZE, TYPE> operator * (const std::initializer_list<TYPE> &other) const { return this->mapped(_mul_out, std::begin(other), std::end(other)); }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> &operator *= (const CONSTRUCTIBLE &other, Vec<SIZE, TYPE> &vec) { return vec.map([ other ] (TYPE &a) { _mul_in(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> &operator *= (Vec<SIZE, TYPE> &vec, const CONSTRUCTIBLE &other) { return vec.map([ other ] (TYPE &a) { _mul_in(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_ITERATIVE(TYPE)
         Vec<SIZE, TYPE> &operator *= (const ITERATIVE &other) { return this->map(_mul_in, std::begin(other), std::end(other)); }
         Vec<SIZE, TYPE> &operator *= (const std::initializer_list<TYPE> &other) { return this->map(_mul_in, std::begin(other), std::end(other)); }
 
 // -------------------------------------
 //
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> operator / (const CONSTRUCTIBLE &other, const Vec<SIZE, TYPE> &vec) { return vec.mapped([ other ] (const TYPE &a) { return _div_out(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> operator / (const Vec<SIZE, TYPE> &vec, const CONSTRUCTIBLE &other) { return vec.mapped([ other ] (const TYPE &a) { return _div_out(a, other); }); }
 
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> &operator /= (const CONSTRUCTIBLE &other, Vec<SIZE, TYPE> &vec) { return vec.map([ other ] (TYPE &a) { _div_in(a, other); }); }
-        MODULE_SPATIAL_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_CONSTRUCTIBLE(TYPE)
         friend Vec<SIZE, TYPE> &operator /= (Vec<SIZE, TYPE> &vec, const CONSTRUCTIBLE &other) { return vec.map([ other ] (TYPE &a) { _div_in(a, other); }); }
 
 // -----------------------------------------------------------------------------

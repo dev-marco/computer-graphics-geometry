@@ -1,11 +1,11 @@
-#ifndef MODULE_SPATIAL_DEFAULTS_H_
-#define MODULE_SPATIAL_DEFAULTS_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_DEFAULTS_H_
+#define MODULE_GRAPHICS_GEOMETRY_DEFAULTS_H_
 
-typedef double float_max_t;
+typedef double float_t;
 
-namespace Spatial {
+namespace Geometry {
 
-    constexpr float_max_t
+    constexpr float_t
         EPSILON = 0.0000000000000001,
         PI = 3.141592653589793238462643383279502884,
         DEG15 = PI / 12.0,
@@ -32,7 +32,7 @@ namespace Spatial {
         return value;
     }
 
-    constexpr closeToZero (float_max_t value) { return -EPSILON <= value && value <= EPSILON; }
+    constexpr closeToZero (float_t value) { return -EPSILON <= value && value <= EPSILON; }
 };
 
 #endif

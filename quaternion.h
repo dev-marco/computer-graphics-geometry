@@ -1,19 +1,19 @@
-#ifndef MODULE_SPATIAL_QUATERNION_H_
-#define MODULE_SPATIAL_QUATERNION_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_QUATERNION_H_
+#define MODULE_GRAPHICS_GEOMETRY_QUATERNION_H_
 
 #include <list>
 #include "defaults.h"
 #include "vec.h"
 
-namespace Spatial {
+namespace Geometry {
     class Quaternion : public Vec<4> {
 
     public:
 
         static const Quaternion identity;
 
-        static Quaternion axisAngle (const Vec<3> &axis, float_max_t angle) {
-            const float_max_t half_angle = angle * 0.5;
+        static Quaternion axisAngle (const Vec<3> &axis, float_t angle) {
+            const float_t half_angle = angle * 0.5;
             const Vec<3> unit_vec = axis.normalized() * std::sin(half_angle);
 
             return Quaternion(
@@ -30,8 +30,8 @@ namespace Spatial {
             static Vec<3> axis;
             vec_1.normalize();
             vec_2.normalize();
-            constexpr float_max_t border = 1.0 - EPSILON;
-            const float_max_t dot_prod = vec_1.dot(vec_2);
+            constexpr float_t border = 1.0 - EPSILON;
+            const float_t dot_prod = vec_1.dot(vec_2);
             if (dot_prod > border) {
                 return identity;
             } else if (dot_prod < -border) {
@@ -47,9 +47,9 @@ namespace Spatial {
 
 // -------------------------------------
 
-        static Quaternion eulerZYX (float_max_t Z, float_max_t Y, float_max_t X) {
+        static Quaternion eulerZYX (float_t Z, float_t Y, float_t X) {
 
-            const float_max_t
+            const float_t
                 hz = Z * 0.5, hy = Y * 0.5, hx = X * 0.5,
                 cz = std::cos(hz), sz = std::sin(hz),
                 cy = std::cos(hy), sy = std::sin(hy),
@@ -91,14 +91,14 @@ namespace Spatial {
             this->normalize();
         }
 
-        inline Quaternion (float_max_t x, float_max_t y, float_max_t z, float_max_t w) : Vec<4>({ x, y, z, w }) {
+        inline Quaternion (float_t x, float_t y, float_t z, float_t w) : Vec<4>({ x, y, z, w }) {
             this->normalize();
         }
 
 // -----------------------------------------------------------------------------
 
-        inline std::array<float_max_t, 16> rotation (void) const {
-            const float_max_t
+        inline std::array<float_t, 16> rotation (void) const {
+            const float_t
                 qi = this->store[0], qj = this->store[1],
                 qk = this->store[2], qr = this->store[3],
                 qii = qi * qi, qjj = qj * qj, qkk = qk * qk,

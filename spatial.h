@@ -1,5 +1,5 @@
-#ifndef MODULE_SPATIAL_SPATIAL_H_
-#define MODULE_SPATIAL_SPATIAL_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_SPATIAL_H_
+#define MODULE_GRAPHICS_GEOMETRY_SPATIAL_H_
 
 #include "defaults.h"
 #include "intersection.h"

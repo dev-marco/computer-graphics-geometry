@@ -1,10 +1,10 @@
-#ifndef MODULE_SPATIAL_LINE_H_
-#define MODULE_SPATIAL_LINE_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_LINE_H_
+#define MODULE_GRAPHICS_GEOMETRY_LINE_H_
 
 #include "defaults.h"
 #include "vec.h"
 
-namespace Spatial {
+namespace Geometry {
     class Line {
 
         Vec<3> point, direction;
@@ -21,7 +21,7 @@ namespace Spatial {
         inline void setPoint (const Vec<3> &_point) { this->point = _point; }
         inline void setDirection (const Vec<3> &_direction) { this->direction = _direction.normalized(); }
 
-        inline Vec<3> at (float_max_t param) const { return this->getPoint() + (this->getDirection() * param); }
+        inline Vec<3> at (float_t param) const { return this->getPoint() + (this->getDirection() * param); }
     };
 };
 

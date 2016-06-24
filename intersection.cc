@@ -1,12 +1,12 @@
 #include <iostream>
 #include "intersection.h"
 
-namespace Spatial {
+namespace Geometry {
 
     namespace Intersection {
 
-        Spatial::Vec<3> __default_vec_3_;
-        float_max_t __default_float_max_;
+        Geometry::Vec<3> __default_vec_3_;
+        float_t __default_float_max_;
         unsigned __default_unsigned_;
         bool __default_bool_;
 
@@ -26,11 +26,11 @@ namespace Spatial {
                 const Vec<3> &line_point,
                 const Vec<3> &line_direction,
                 Vec<3> &intersection_point,
-                float_max_t &t_inter
+                float_t &t_inter
             ) {
                 Vec<3> near_point;
-                const float_max_t length_2 = line_direction.length2();
-                float_max_t param = 0.0;
+                const float_t length_2 = line_direction.length2();
+                float_t param = 0.0;
 
                 if (length_2 == 0.0) {
                     near_point = line_point;
@@ -66,28 +66,28 @@ namespace Spatial {
                 const Vec<3> &line_1_delta,
                 const Vec<3> &line_2_point,
                 const Vec<3> &line_2_delta,
-                float_max_t &t_1,
-                float_max_t &t_2
+                float_t &t_1,
+                float_t &t_2
             ) {
                 const Vec<3> rays_delta = line_1_point - line_2_point;
 
-                const float_max_t
+                const float_t
                     line_1_size2 = line_1_delta.length2(),
                     line_2_size2 = line_2_delta.length2();
 
-                float_max_t mu_a = 0.0, mu_b = 0.0;
+                float_t mu_a = 0.0, mu_b = 0.0;
 
                 if (line_1_size2 <= EPSILON) {
                     if (line_2_size2 > EPSILON) {
                         mu_b = clamp(line_2_delta.dot(rays_delta) / line_2_size2, 0.0, 1.0);
                     }
                 } else {
-                    const float_max_t c = line_1_delta.dot(rays_delta);
+                    const float_t c = line_1_delta.dot(rays_delta);
 
                     if (line_2_size2 <= EPSILON) {
                         mu_a = clamp(-c / line_1_size2, 0.0, 1.0);
                     } else {
-                        const float_max_t
+                        const float_t
                             b = line_1_delta.dot(line_2_delta),
                             denom = line_1_size2 * line_2_size2 - b * b,
                             f = line_2_delta.dot(rays_delta);
@@ -96,7 +96,7 @@ namespace Spatial {
                             mu_a = clamp((b * f - c * line_2_size2) / denom, 0.0, 1.0);
                         }
 
-                        const float_max_t numer = b * mu_a + f;
+                        const float_t numer = b * mu_a + f;
 
                         if (numer <= 0.0) {
                             mu_a = clamp(-c / line_1_size2, 0.0, 1.0);
@@ -117,11 +117,11 @@ namespace Spatial {
             bool Plane (
                 const Vec<3> &line_point,
                 const Vec<3> &line_direction,
-                const Spatial::Plane &plane,
-                float_max_t &t_inter
+                const Geometry::Plane &plane,
+                float_t &t_inter
             ) {
                 const Vec<3> &plane_normal = plane.getNormal();
-                const float_max_t dot = plane_normal.dot(line_direction);
+                const float_t dot = plane_normal.dot(line_direction);
                 if (!closeToZero(dot)) {
                     t_inter = (plane.getD() - plane_normal.dot(line_point)) / dot;
                     return true;
@@ -133,13 +133,13 @@ namespace Spatial {
                 const Vec<3> &line_point,
                 const Vec<3> &line_direction,
                 const Vec<3> &sphere_center,
-                const float_max_t &sphere_radius,
-                float_max_t &t_min,
-                float_max_t &t_max
+                const float_t &sphere_radius,
+                float_t &t_min,
+                float_t &t_max
             ) {
-                const float_max_t line_length_inv = 1.0 / line_direction.length();
+                const float_t line_length_inv = 1.0 / line_direction.length();
                 const Vec<3> diff = line_point - sphere_center;
-                const float_max_t
+                const float_t
                     b = diff.dot(line_direction * line_length_inv),
                     c = diff.length2() - sphere_radius * sphere_radius,
                     discr = (b * b) - c;
@@ -148,7 +148,7 @@ namespace Spatial {
                     return false;
                 }
 
-                const float_max_t
+                const float_t
                     sqrt_discr = std::sqrt(discr),
                     mu_1 = -(b + sqrt_discr) * line_length_inv,
                     mu_2 = (sqrt_discr - b) * line_length_inv;
@@ -167,16 +167,16 @@ namespace Spatial {
                 const Vec<3> &line_direction,
                 const Vec<3> &box_min,
                 const Vec<3> &box_max,
-                float_max_t &t_min,
+                float_t &t_min,
                 unsigned &axis_t_min,
                 bool &is_t_min_box_min,
-                float_max_t &t_max,
+                float_t &t_max,
                 unsigned &axis_t_max,
                 bool &is_t_max_box_min
             ) {
-                float_max_t
-                    mu_min = -std::numeric_limits<float_max_t>::infinity(),
-                    mu_max = std::numeric_limits<float_max_t>::infinity();
+                float_t
+                    mu_min = -std::numeric_limits<float_t>::infinity(),
+                    mu_max = std::numeric_limits<float_t>::infinity();
 
                 for (unsigned i = 0; i < 3; ++i) {
                     if (closeToZero(line_direction[i])) {
@@ -184,9 +184,9 @@ namespace Spatial {
                             return false;
                         }
                     } else {
-                        const float_max_t ood = 1.0 / line_direction[i];
+                        const float_t ood = 1.0 / line_direction[i];
                         const bool inverse = ood < 0.0;
-                        float_max_t t1, t2;
+                        float_t t1, t2;
                         if (inverse) {
                             t1 = (box_max[i] - line_point[i]) * ood;
                             t2 = (box_min[i] - line_point[i]) * ood;
@@ -219,11 +219,11 @@ namespace Spatial {
                 const Vec<3> &line_direction,
                 const Vec<3> &cylinder_bottom,
                 const Vec<3> &cylinder_top,
-                const float_max_t &cylinder_radius,
-                float_max_t &t_min,
+                const float_t &cylinder_radius,
+                float_t &t_min,
                 bool &is_t_min_top_cap,
                 bool &is_t_min_bottom_cap,
-                float_max_t &t_max,
+                float_t &t_max,
                 bool &is_t_max_top_cap,
                 bool &is_t_max_bottom_cap
             ) {
@@ -231,19 +231,19 @@ namespace Spatial {
                     cylinder_delta = cylinder_top - cylinder_bottom,
                     diff = line_point - cylinder_bottom;
 
-                const float_max_t
+                const float_t
                     md = diff.dot(cylinder_delta),
                     nd = line_direction.dot(cylinder_delta),
                     dd = cylinder_delta.length2();
 
-                const float_max_t
+                const float_t
                     nn = line_direction.dot(line_direction),
                     mn = diff.dot(line_direction),
                     a = dd * nn - nd * nd,
                     k = diff.length2() - cylinder_radius * cylinder_radius,
                     c = dd * k - md * md;
 
-                float_max_t mu_1, mu_2;
+                float_t mu_1, mu_2;
                 bool
                     intersect = false,
                     is_mu_1_top_cap = false,
@@ -260,7 +260,7 @@ namespace Spatial {
                     mu_2 = (nd - mn) / nn;
                     is_mu_1_top_cap = is_mu_2_bottom_cap = true;
                 } else {
-                    const float_max_t
+                    const float_t
                         b = dd * mn - nd * md,
                         discr = b * b - a * c;
 
@@ -268,7 +268,7 @@ namespace Spatial {
                         return false;
                     }
 
-                    const float_max_t
+                    const float_t
                         sqrt_discr = std::sqrt(discr),
                         a_inv = 1.0 / a;
 
@@ -314,22 +314,22 @@ namespace Spatial {
             bool Polyhedron (
                 const Vec<3> &line_point,
                 const Vec<3> &line_direction,
-                const std::vector<Spatial::Plane> &planes,
-                float_max_t &t_min,
+                const std::vector<Geometry::Plane> &planes,
+                float_t &t_min,
                 unsigned &face_min,
-                float_max_t &t_max,
+                float_t &t_max,
                 unsigned &face_max
             ) {
-                float_max_t
-                    mu_min = -std::numeric_limits<float_max_t>::infinity(),
-                    mu_max = std::numeric_limits<float_max_t>::infinity();
+                float_t
+                    mu_min = -std::numeric_limits<float_t>::infinity(),
+                    mu_max = std::numeric_limits<float_t>::infinity();
 
                 for (unsigned i = 0, size = planes.size(); i < size; ++i) {
 
                     const Vec<3> &plane_normal = planes[i].getNormal();
-                    const float_max_t &plane_d = planes[i].getD();
+                    const float_t &plane_d = planes[i].getD();
 
-                    const float_max_t
+                    const float_t
                         denom = plane_normal.dot(line_direction),
                         dist = plane_d - plane_normal.dot(line_point);
 
@@ -338,7 +338,7 @@ namespace Spatial {
                             return false;
                         }
                     } else {
-                        const float_max_t t = dist / denom;
+                        const float_t t = dist / denom;
                         if (denom < 0.0) {
                             if (t > mu_min) {
                                 face_min = i;

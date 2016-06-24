@@ -1,11 +1,11 @@
-#ifndef MODULE_SPATIAL_POLYHEDRON_H_
-#define MODULE_SPATIAL_POLYHEDRON_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_POLYHEDRON_H_
+#define MODULE_GRAPHICS_GEOMETRY_POLYHEDRON_H_
 
 #include <vector>
 #include "../plane.h"
 #include "shape.h"
 
-namespace Spatial {
+namespace Geometry {
 
     class Polyhedron : public Shape {
 
@@ -29,7 +29,7 @@ namespace Spatial {
 
         inline Shape *clone (void) const override { return new Polyhedron(this->getPlanes()); }
 
-        bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_max_t &t_min, float_max_t &t_max, bool fix_normals = true) const override;
+        bool intersectLine (const Line &line, Vec<3> &normal_min, Vec<3> &normal_max, float_t &t_min, float_t &t_max, bool fix_normals = true) const override;
 
     };
 

@@ -1,12 +1,12 @@
-#ifndef MODULE_SPATIAL_TYPE_TRATS_H_
-#define MODULE_SPATIAL_TYPE_TRATS_H_
+#ifndef MODULE_GRAPHICS_GEOMETRY_TYPE_TRATS_H_
+#define MODULE_GRAPHICS_GEOMETRY_TYPE_TRATS_H_
 
 #include <type_traits>
 #include <initializer_list>
 #include <algorithm>
 #include "defaults.h"
 
-namespace Spatial {
+namespace Geometry {
 
     template <typename TYPE, TYPE...>
     struct static_pack;
