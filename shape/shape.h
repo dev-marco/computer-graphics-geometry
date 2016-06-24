@@ -11,8 +11,8 @@ namespace Spatial {
 
     public:
 
-        constexpr Shape(void) {}
-        virtual ~Shape(void) {}
+        constexpr Shape (void) {}
+        virtual ~Shape (void) {}
 
         virtual bool fit (void) const = 0;
 
