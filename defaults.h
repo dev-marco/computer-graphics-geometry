@@ -1,6 +1,9 @@
 #ifndef MODULE_GRAPHICS_GEOMETRY_DEFAULTS_H_
 #define MODULE_GRAPHICS_GEOMETRY_DEFAULTS_H_
 
+#include <iostream>
+#include <cmath>
+
 typedef double float_max_t;
 
 namespace Geometry {
@@ -24,7 +27,7 @@ namespace Geometry {
         RAD2DEG = 180.0 / DEG180;
 
     template <typename T>
-    constexpr T clamp (const T value, const T min_value, const T max_value) {
+    constexpr T clamp (const T &value, const T &min_value, const T &max_value) {
         if (value > max_value) {
             return max_value;
         } else if (value < min_value) {
@@ -33,7 +36,10 @@ namespace Geometry {
         return value;
     }
 
-    constexpr closeToZero (float_max_t value) { return -EPSILON <= value && value <= EPSILON; }
+    constexpr float_max_t fract (const float_max_t &value) { return value - std::floor(value); }
+
+    constexpr closeTo (const float_max_t &value, const float_max_t &close, const float_max_t &much = EPSILON) { return (close - much) <= value && value <= (close + much); }
+    constexpr closeToZero (const float_max_t &value, const float_max_t &much = EPSILON) { return -much <= value && value <= much; }
 };
 
 #endif
