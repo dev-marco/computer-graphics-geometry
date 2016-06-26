@@ -83,6 +83,8 @@ namespace Geometry {
 
 // -----------------------------------------------------------------------------
 
+        inline Quaternion (void) {}
+
         template <
             typename TYPE_C,
             typename = typename std::enable_if<std::is_convertible<TYPE_C, Vec<4>>::value, TYPE_C>::type
