@@ -28,34 +28,28 @@ namespace Geometry {
                 Vec<3> &intersection_point,
                 float_max_t &t_inter
             ) {
-                Vec<3> near_point;
-                const float_max_t length_2 = line_direction.length2();
-                float_max_t param = 0.0;
-
-                if (length_2 == 0.0) {
-                    near_point = line_point;
-                } else {
-                    param = ((point - line_point) * line_direction).sum() / length_2;
-                    near_point = line_point + (param * line_direction);
+                float_max_t param = ((point - line_point) * line_direction).sum();
+                Vec<3> near_point = line_point + (param * line_direction);
+                if (near_point.distance2(point) <= EPSILON) {
+                    t_inter = param;
+                    intersection_point.swap(near_point);
+                    return true;
                 }
-
-                t_inter = param;
-
-                const bool result = near_point.distance2(point) <= EPSILON;
-                intersection_point.swap(near_point);
-                return result;
+                return false;
             }
 
             bool Plane (
                 const Vec<3> &point,
                 const Vec<3> &plane_normal,
-                const Vec<3> &plane_point,
+                const float_max_t &plane_d,
                 Vec<3> &intersection_point
             ) {
-                Vec<3> near_point = point + plane_normal * ((plane_normal.dot(plane_point) - plane_normal.dot(point)) / plane_normal.length2());
-                const bool result = near_point.distance2(point) <= EPSILON;
-                intersection_point.swap(near_point);
-                return result;
+                Vec<3> near_point = point + plane_normal * (plane_d - plane_normal.dot(point));
+                if (near_point.distance2(point) <= EPSILON) {
+                    intersection_point.swap(near_point);
+                    return true;
+                }
+                return false;
             }
         };
 
@@ -69,44 +63,29 @@ namespace Geometry {
                 float_max_t &t_1,
                 float_max_t &t_2
             ) {
-                const Vec<3> rays_delta = line_1_point - line_2_point;
+                const Vec<3> lines_delta = line_1_point - line_2_point;
 
                 const float_max_t
-                    line_1_size2 = line_1_delta.length2(),
-                    line_2_size2 = line_2_delta.length2();
+                    c = line_1_delta.dot(lines_delta),
+                    b = line_1_delta.dot(line_2_delta),
+                    denom = 1.0 - b * b,
+                    f = line_2_delta.dot(lines_delta);
 
                 float_max_t mu_a = 0.0, mu_b = 0.0;
 
-                if (line_1_size2 <= EPSILON) {
-                    if (line_2_size2 > EPSILON) {
-                        mu_b = clamp(line_2_delta.dot(rays_delta) / line_2_size2, 0.0, 1.0);
-                    }
+                if (denom != 0.0) {
+                    mu_a = clamp((b * f - c) / denom, 0.0, 1.0);
+                }
+
+                const float_max_t numer = b * mu_a + f;
+
+                if (numer <= 0.0) {
+                    mu_a = clamp(-c, 0.0, 1.0);
+                } else if (numer >= 1.0) {
+                    mu_b = 1.0;
+                    mu_a = clamp(b - c, 0.0, 1.0);
                 } else {
-                    const float_max_t c = line_1_delta.dot(rays_delta);
-
-                    if (line_2_size2 <= EPSILON) {
-                        mu_a = clamp(-c / line_1_size2, 0.0, 1.0);
-                    } else {
-                        const float_max_t
-                            b = line_1_delta.dot(line_2_delta),
-                            denom = line_1_size2 * line_2_size2 - b * b,
-                            f = line_2_delta.dot(rays_delta);
-
-                        if (denom != 0.0) {
-                            mu_a = clamp((b * f - c * line_2_size2) / denom, 0.0, 1.0);
-                        }
-
-                        const float_max_t numer = b * mu_a + f;
-
-                        if (numer <= 0.0) {
-                            mu_a = clamp(-c / line_1_size2, 0.0, 1.0);
-                        } else if (numer >= line_2_size2) {
-                            mu_b = 1.0;
-                            mu_a = clamp((b - c) / line_1_size2, 0.0, 1.0);
-                        } else {
-                            mu_b = numer / line_2_size2;
-                        }
-                    }
+                    mu_b = numer;
                 }
 
                 t_1 = mu_a, t_2 = mu_b;
@@ -137,10 +116,9 @@ namespace Geometry {
                 float_max_t &t_min,
                 float_max_t &t_max
             ) {
-                const float_max_t line_length_inv = 1.0 / line_direction.length();
                 const Vec<3> diff = line_point - sphere_center;
                 const float_max_t
-                    b = diff.dot(line_direction * line_length_inv),
+                    b = diff.dot(line_direction),
                     c = diff.length2() - sphere_radius * sphere_radius,
                     discr = (b * b) - c;
 
@@ -150,8 +128,8 @@ namespace Geometry {
 
                 const float_max_t
                     sqrt_discr = std::sqrt(discr),
-                    mu_1 = -(b + sqrt_discr) * line_length_inv,
-                    mu_2 = (sqrt_discr - b) * line_length_inv;
+                    mu_1 = -(b + sqrt_discr),
+                    mu_2 = sqrt_discr - b;
 
                 if (mu_1 > mu_2) {
                     t_min = mu_2, t_max = mu_1;
@@ -218,7 +196,8 @@ namespace Geometry {
                 const Vec<3> &line_point,
                 const Vec<3> &line_direction,
                 const Vec<3> &cylinder_bottom,
-                const Vec<3> &cylinder_top,
+                const Vec<3> &cylinder_delta,
+                const float_max_t &cylinder_height2,
                 const float_max_t &cylinder_radius,
                 float_max_t &t_min,
                 bool &is_t_min_top_cap,
@@ -227,21 +206,18 @@ namespace Geometry {
                 bool &is_t_max_top_cap,
                 bool &is_t_max_bottom_cap
             ) {
-                const Vec<3>
-                    cylinder_delta = cylinder_top - cylinder_bottom,
-                    diff = line_point - cylinder_bottom;
+                const Vec<3> diff = line_point - cylinder_bottom;
 
                 const float_max_t
                     md = diff.dot(cylinder_delta),
-                    nd = line_direction.dot(cylinder_delta),
-                    dd = cylinder_delta.length2();
+                    nd = line_direction.dot(cylinder_delta);
 
                 const float_max_t
                     nn = line_direction.dot(line_direction),
                     mn = diff.dot(line_direction),
-                    a = dd * nn - nd * nd,
+                    a = cylinder_height2 * nn - nd * nd,
                     k = diff.length2() - cylinder_radius * cylinder_radius,
-                    c = dd * k - md * md;
+                    c = cylinder_height2 * k - md * md;
 
                 float_max_t mu_1, mu_2;
                 bool
@@ -261,7 +237,7 @@ namespace Geometry {
                     is_mu_1_top_cap = is_mu_2_bottom_cap = true;
                 } else {
                     const float_max_t
-                        b = dd * mn - nd * md,
+                        b = cylinder_height2 * mn - nd * md,
                         discr = b * b - a * c;
 
                     if (discr < 0.0) {
@@ -279,10 +255,10 @@ namespace Geometry {
                         is_mu_1_top_cap = true;
                         mu_1 = -md / nd;
                         intersect = (k + mu_1 * (2.0 * mn + mu_1 * nn) <= 0.0);
-                    } else if (md + (mu_1 * nd) > dd) {
+                    } else if (md + (mu_1 * nd) > cylinder_height2) {
                         is_mu_1_bottom_cap = true;
-                        mu_1 = (dd - md) / nd;
-                        intersect = (k + dd - 2.0 * md + mu_1 * (2.0 * (mn - nd) + mu_1 * nn) <= 0.0);
+                        mu_1 = (cylinder_height2 - md) / nd;
+                        intersect = (k + cylinder_height2 - 2.0 * md + mu_1 * (2.0 * (mn - nd) + mu_1 * nn) <= 0.0);
                     } else {
                         intersect = true;
                     }
@@ -291,9 +267,9 @@ namespace Geometry {
                         if (md + (mu_2 * nd) < 0.0) {
                             is_mu_2_top_cap = true;
                             mu_2 = -md / nd;
-                        } else if (md + (mu_2 * nd) > dd) {
+                        } else if (md + (mu_2 * nd) > cylinder_height2) {
                             is_mu_2_bottom_cap = true;
-                            mu_2 = (dd - md) / nd;
+                            mu_2 = (cylinder_height2 - md) / nd;
                         }
                     }
                 }

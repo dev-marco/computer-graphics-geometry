@@ -33,7 +33,7 @@ namespace Geometry {
             bool Plane (
                 const Vec<3> &point,
                 const Vec<3> &plane_normal,
-                const Vec<3> &plane_point,
+                const float_max_t &plane_d,
                 Vec<3> &closest_point = __default_vec_3_
             );
         };
@@ -86,8 +86,9 @@ namespace Geometry {
             bool Cylinder (
                 const Vec<3> &line_point,
                 const Vec<3> &line_direction,
-                const Vec<3> &cylinder_top,
                 const Vec<3> &cylinder_bottom,
+                const Vec<3> &cylinder_delta,
+                const float_max_t &cylinder_height2,
                 const float_max_t &cylinder_radius,
                 float_max_t &t_min = __default_float_max_,
                 bool &is_t_min_top_cap = __default_bool_,
