@@ -27,32 +27,26 @@ namespace Geometry {
         this->s_index = 0, this->t_index = 1;
     }
 
-    Plane::Plane (const Vec<3> &_normal, float_max_t _d) :
-        normal(_normal.normalized()), d(_d) {
-        float_max_t
+    void Plane::calcParams (void) {
+        const float_max_t
             absx = std::abs(this->normal[0]),
             absy = std::abs(this->normal[1]),
             absz = std::abs(this->normal[2]);
 
-        if (!closeToZero(absx) && absx < absy && absx < absz) {
+        const bool
+            cy = absy <= EPSILON,
+            cz = absz <= EPSILON;
+
+        if (absx > EPSILON && (absx < absy || cy) && (absx < absz || cz)) {
             this->calcForX();
-        } else if (!closeToZero(absy) && absy < absz) {
+        } else if (!cy && (absy < absz || cz)) {
             this->calcForY();
         } else {
             this->calcForZ();
         }
     }
 
-    bool Plane::param (const Vec<3> &point, float_max_t &s, float_max_t &t, bool in) {
-        if (in || this->inside(point)) {
-            s = point[this->s_index];
-            t = point[this->t_index];
-            return true;
-        }
-        return false;
-    }
-
-    bool Plane::intersectLine (const Line &line, Vec<3> &normal, float_max_t &t_inter, bool fix_normal) {
+    bool Plane::intersectLine (const Line &line, Vec<3> &normal, float_max_t &t_inter, bool fix_normal) const {
         if (Intersection::Line::Plane(line.getPoint(), line.getDirection(), *this, t_inter)) {
             if (fix_normal) {
                 normal = this->getNormal().opposed(line.getDirection());
