@@ -36,7 +36,7 @@ namespace Geometry {
         return value;
     }
 
-    constexpr float_max_t fract (const float_max_t &value) { return value - std::floor(value); }
+    inline float_max_t fract (const float_max_t &value) { return value - std::floor(value); }
 
     constexpr bool closeTo (const float_max_t &value, const float_max_t &close, const float_max_t &much = EPSILON) { return (close - much) <= value && value <= (close + much); }
     constexpr bool closeToZero (const float_max_t &value, const float_max_t &much = EPSILON) { return -much <= value && value <= much; }
