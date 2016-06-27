@@ -9,7 +9,7 @@ typedef double float_max_t;
 namespace Geometry {
 
     constexpr float_max_t
-        EPSILON = 0.0000000000000001,
+        EPSILON = 1e-10,
         PI = 3.141592653589793238462643383279502884,
         TWO_PI = PI + PI,
         DEG15 = PI / 12.0,
@@ -38,8 +38,8 @@ namespace Geometry {
 
     constexpr float_max_t fract (const float_max_t &value) { return value - std::floor(value); }
 
-    constexpr closeTo (const float_max_t &value, const float_max_t &close, const float_max_t &much = EPSILON) { return (close - much) <= value && value <= (close + much); }
-    constexpr closeToZero (const float_max_t &value, const float_max_t &much = EPSILON) { return -much <= value && value <= much; }
+    constexpr bool closeTo (const float_max_t &value, const float_max_t &close, const float_max_t &much = EPSILON) { return (close - much) <= value && value <= (close + much); }
+    constexpr bool closeToZero (const float_max_t &value, const float_max_t &much = EPSILON) { return -much <= value && value <= much; }
 };
 
 #endif
