@@ -108,6 +108,8 @@ namespace Geometry {
 
     };
 
+    extern bool __default_bool_;
+
     template <unsigned SIZE, typename TYPE = float_max_t>
     class Vec {
 
@@ -512,18 +514,40 @@ namespace Geometry {
 
 // -------------------------------------
 
-        inline Vec<SIZE, TYPE> opposed (const Vec<SIZE, TYPE> &other) const {
-            if (this->dot(other) > 0) {
-                return -(*this);
+        inline Vec<SIZE, TYPE> allClamped (const TYPE &min, const TYPE &max) const {
+            Vec<SIZE, TYPE> result;
+            for (unsigned i = 0; i < SIZE; ++i) {
+                result.store[i] = Geometry::clamp(this->store[i], min, max);
+            }
+            return result;
+        }
+
+        inline Vec<SIZE, TYPE> &allClamp (const TYPE &min, const TYPE &max) {
+            for (unsigned i = 0; i < SIZE; ++i) {
+                this->store[i] = Geometry::clamp(this->store[i], min, max);
             }
             return *this;
         }
 
-        inline Vec<SIZE, TYPE> &oppose (const Vec<SIZE, TYPE> &other) {
+// -------------------------------------
+
+        inline Vec<SIZE, TYPE> opposed (const Vec<SIZE, TYPE> &other, bool &changed = __default_bool_) const {
             if (this->dot(other) > 0) {
+                changed = true;
+                return -(*this);
+            }
+            changed = false;
+            return *this;
+        }
+
+        inline Vec<SIZE, TYPE> &oppose (const Vec<SIZE, TYPE> &other, bool &changed = __default_bool_) {
+            if (this->dot(other) > 0) {
+                changed = true;
                 for (unsigned i = 0; i < SIZE; ++i) {
                     this->store[i] = -this->store[i];
                 }
+            } else {
+                changed = false;
             }
             return *this;
         }
