@@ -22,6 +22,7 @@ namespace Geometry {
         inline void setDirection (const Vec<3> &_direction) { this->direction = _direction.normalized(); }
 
         inline Vec<3> at (float_max_t param) const { return this->getPoint() + (this->getDirection() * param); }
+        float_max_t param (const Vec<3> &point) const;
     };
 };
 
