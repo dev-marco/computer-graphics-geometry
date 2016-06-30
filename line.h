@@ -23,6 +23,8 @@ namespace Geometry {
 
         inline Vec<3> at (float_max_t param) const { return this->getPoint() + (this->getDirection() * param); }
         float_max_t param (const Vec<3> &point) const;
+
+        inline Line perpendicular (void) const { return Line(this->getPoint(), this->getDirection().perpendicular()); }
     };
 };
 
