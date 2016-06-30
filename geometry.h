@@ -7,6 +7,7 @@
 #include "line.h"
 #include "parametric.h"
 #include "plane.h"
+#include "poisson_disc.h"
 #include "quaternion.h"
 #include "type_traits.h"
 #include "vec.h"
