@@ -401,6 +401,18 @@ namespace Geometry {
             };
         }
 
+// -------------------------------------
+
+        MODULE_GRAPHICS_GEOMETRY_VEC_TEMPLATE_IS_EQUAL(SIZE, 3)
+        inline constexpr Vec<3, TYPE> perpendicular (void) const {
+
+            if (this->store[0] != -this->store[1]) {
+                return Vec<3, TYPE>({ this->store[2], this->store[2], -(this->store[0] + this->store[1]) });
+            }
+
+            return Vec<3, TYPE>({ -(this->store[1] + this->store[2]), this->store[0], this->store[0] });
+        }
+
 // -----------------------------------------------------------------------------
 
         inline constexpr TYPE distance2 (const Vec<SIZE, TYPE> &other) const {
