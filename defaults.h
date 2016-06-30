@@ -24,7 +24,15 @@ namespace Geometry {
         DEG315 = -DEG45,
         DEG360 = 0.0,
         DEG2RAD = DEG180 / 180.0,
-        RAD2DEG = 180.0 / DEG180;
+        RAD2DEG = 180.0 / DEG180,
+        SQRT_2 = 1.4142135623730951,
+        SQRT_2_INV = 1.0 / SQRT_2,
+        SQRT_3 = 1.7320508075688772,
+        SQRT_5 = 2.23606797749979,
+        SQRT_6 = 2.449489742783178,
+        SQRT_7 = 2.6457513110645907,
+        SQRT_8 = 2.8284271247461903,
+        SQRT_10 = 3.1622776601683795;
 
     template <typename T>
     constexpr T clamp (const T &value, const T &min_value, const T &max_value) {
